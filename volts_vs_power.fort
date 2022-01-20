@@ -1,0 +1,27 @@
+.elfos
+.options
+.binary
+C      CONVERT VOLTS TO POWER IN WATTS FOR ANY LOAD
+C      WRITTEN BY B. MURPHY FEB 17, 2020
+C      Modified for 1802 Fortran II compiler January 15,2022
+       REAL Z, START, END, INC, DIFF
+       WRITE(0,10)
+10     FORMAT(' Volts VS peak Volts VS Power in Watts  V1.2') 
+11     WRITE(0,12)
+12     FORMAT(' start volts, end volts, increment volts, impedance?')      
+       READ(*,*) START, END, INC, Z 
+       VOLTS = START
+15     POWER = VOLTS * VOLTS / Z
+       PEAK  = VOLTS *2. *1.414
+       WRITE(0,20)VOLTS, PEAK, POWER
+20     FORMAT(' RMS VOLTS=',F8.2,'  PEAK VOLTS=',F8.2 ,'  POWER=',F8.2)
+       VOLTS = VOLTS + INC 
+       IF ( VOLTS .LE. END ) GOTO 15
+       WRITE(0,30)
+30     FORMAT( 'another run? type 1 for yes')
+       READ(*,*) I
+       IF ( I .EQ. 1 ) GOTO 11
+       WRITE(0,40) 
+40     FORMAT( ' ALL DONE. BYE BYE') 
+       STOP
+       END                                               

@@ -1,0 +1,7 @@
+.binary
+C
+      Write(0,10)
+   10 format('hello')
+      stop
+      end
+
