@@ -1,7 +1,8 @@
 .binary
+.elfos
+.options
 C
-      Write(0,10)
-   10 format('hello')
+      Write(*,*) 'Hello'
       stop
       end
 
