@@ -5,21 +5,21 @@
 1     FORMAT(' Compute VSWR Versus Reflected Power')
 C     MAXRFL is maximum reflected power
 C     PWRRFL is reflected power as a percentage
-3     WRITE(0,5)
+3     WRITE(5,5)
 5     FORMAT( 'Enter maximum reflected power')
-      READ(0,*) MAXRFL 
+      READ(*,*) MAXRFL 
       IF ( MAXRFL .LE. 0 ) GOTO 3
       PWRFWD = 100.0
       DO 100 I = 1, MAXRFL   
       PWRRFL = I
       RATIO = SQRT(PWRRFL/PWRFWD) 
       VSWR  = (1. + RATIO) /(1. -RATIO)
-      WRITE(0,10) VSWR,PWRRFL
+      WRITE(5,10) VSWR,PWRRFL
 10    FORMAT(' SWR=',F5.1,'    REFLECTED POWER %=',F6.1)
 100   CONTINUE
-      WRITE(0,110)
+      WRITE(*,110)
 110   FORMAT ('Another run? enter 1 for yes')
-      READ(0,*) J
+      READ(*,*) J
       IF( J .EQ. 1) GOTO 3
       STOP
       END

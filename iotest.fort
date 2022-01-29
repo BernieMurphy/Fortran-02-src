@@ -1,21 +1,24 @@
 .elfos
 .binary
-.options
+.option
+
 C     Test I/O functions in 1802 Fortan II compiler. January 28, 2021
-      REAL    X1, Y1, Z1, X2, Y2, Z2 
-      INTEGER C, F, LUN, RECLEN, RC,  R
-      INTEGER BENCH_ITER, BENCH_LOOP
-C     BENCH_ITER is number of benchmark iterations  
-C     BENCH_LOOP is the number I/O operations per iteration    
-      DATA BENCH_ITER/20/ BENCH_LOOP/20/
-      DATA LUN/1
-      DATA RECLEN/12      
-      DATA X1/1.
-      DATA Y1/5.
-      DATA Z1/25.
+C     To begin, use Option 1 to open file and then select action desired
+      REAL    x1, y1, z1, x2, y2, z2 
+      INTEGER benchio, c, f, lun, reclen, rc,  r
+      INTEGER bench_iter, bench_loop
+C     bench_iter is number of benchmark iterations  
+C     bench_loop is the number I/O operations per iteration    
+      DATA bench_iter/20/ bench_loop/20/
+      DATA lun/1/
+      DATA reclen/12/      
+      DATA x1/1.
+      DATA y1/5.
+      DATA z1/25.
       COMMON /AREA1/rc
- 
-      WRITE(*,*) 'I/O test 1.2 started'
+      benchio = bench_iter * bench_loop
+
+      WRITE(*,*) 'I/O-Benchmark test 1.3 started'
 
 
 90    WRITE(*,*)  '1 Open for Input/Output'
@@ -24,8 +27,8 @@ C     BENCH_LOOP is the number I/O operations per iteration
       WRITE(*,*)  '4 Endfile'
       WRITE(*,*)  '5 Write unformated to file'
       WRITE(*,*)  '6 Read  unfornated from file'
-      WRITE(*,*)  '7 Read  formated from file '
-      WRITE(*,*)  '8 Write formated to file'
+      WRITE(*,*)  '7 Write formated tofile '
+      WRITE(*,*)  '8 Read  formated to file'
       WRITE(*,*)  '9 Rewind'           
       WRITE(*,*)  '10 Terminate program'
       WRITE(*,*)  '11 Benchmark Write unformated'
@@ -35,154 +38,180 @@ C     BENCH_LOOP is the number I/O operations per iteration
       WRITE(*,*)  'Command'
       READ(*,*)   c   
 
-      GOTO (1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200  
-     C,2300,2400),C
-      goto 90
+      GOTO(1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200  
+     C,2300,2400),c
+      GOTO 90
 
-1100  call open(LUN, 'test.dat',RECLEN)  
-      f = ioflag(LUN)    
-      r = iostatus(LUN)
-      WRITE(*,*)  'OPEN/I-O ioflag=',f, '  ioresult=',r
-      goto 90
+1100  CALL open(lun, 'test.dat',reclen)  
+      f = IOFLAG(lun)    
+      r = IOSTATUS(lun)
+      WRITE(6,*) '+OPEN/I-O'
+      CALL result(f,r)
+      GOTO 90
 
-1200   call open(LUN, 'test2.dat',RECLEN)  
-       f = ioflag(LUN)
-       r = iostatus(LUN)
-       WRITE(*,*)  'OPEN/I-O ioflag=',f, '  ioresult=',r
-       goto 90
-
-
-1300   WRITE(*,*) 'Not yet implemented'
-       goto 90
+1200  CALL open(lun, 'test2.dat',reclen)  
+      f = IOFLAG(lun)
+      r = IOSTATUS(lun)
+      WRITE(6,*)  '+OPEN/I-O'
+      CALL result(f,r)
+      GOTO 90
 
 
-1400   endfile LUN    
-       f = ioflag(LUN)
-       r = iostatus(LUN)
-       WRITE(*,*)  'endfile ioflag=',f, '  ioresult=',r
-       goto 90
+1300  WRITE(*,*) 'Not yet implemented'
+      GOTO 90
 
 
-
-1500   WRITE(LUN) x1,y1,Z1 
-       f = ioflag(LUN)
-       r = iostatus(LUN)
-       WRITE(*,*)  'Write unformated ioflag=',f, '  ioresult=',r
-       goto 90
-
-
-1600   READ(LUN,END=5000,ERR=5020) X2,Y2,Z2
-       f = ioflag(LUN)
-       r = iostatus(LUN)
-       WRITE(*,*)  'Read unformated ioflag=',f, '  ioresult=',r
-       WRITE(*,1610) X2,Y2,Z2    
-1610   FORMAT(3F10.1)
-       goto 90
+1400  ENDFILE lun    
+      f = IOFLAG(lun)
+      r = IOSTATUS(lun)
+      WRITE(6,*)  '+Endfile'
+      CALL result(f,r)
+      GOTO 90
 
 
-1700   READ(LUN,1710,END=5010) X2,Y2,Z2
-1710   FORMAT(3F4)  
-       f = ioflag(LUN)
-       r = iostatus(LUN)
-       WRITE(*,*)  'Read formated ioflag=',f, '  ioresult=',r      
-       WRITE(*,1720) X2,Y2, Z2
-1720   FORMAT(3F10.1)
-       goto 90
+C     Write unformated
+1500  WRITE(lun) x1,y1,z1 
+      f = IOFLAG(lun)
+      r = IOSTATUS(lun)
+      WRITE(6,*)  '+Write unformated' 
+      CALL result(f,r)
+      GOTO 90
 
-1800   WRITE(LUN,1810) x1,y1,z1
-1810   FORMAT(3I4) 
-       f = ioflag(LUN)
-       r = iostatus(LUN)
-       WRITE(*,*)  'Write formated ioflag=',f, '  ioresult=',r
-       goto 90
+C     Read unformat
+1600  READ(lun,END=5000,ERR=5020) x2,y2,z2
+      f = IOFLAG(lun)
+      r = IOSTATUS(lun)
+      WRITE(6,*)  '+Read unformated'
+      CALL result(f,r)
+      WRITE(*,1610) x2,y2,z2    
+1610  FORMAT(3F10.1)
+      GOTO 90
 
-1900   rewind  LUN 
-       f = ioflag(LUN)
-       r = iostatus(LUN)
-       WRITE(*,*)  'Rewind  ioflag=',f, '  ioresult=',r
-       goto 90
+C     Write formated
+1700  WRITE(lun,1710) x1,y1,z1
+1710  FORMAT(3I4) 
+      f = IOFLAG(lun)
+      r = IOSTATUS(lun)
+      WRITE(6,*)  '+Write formated'
+      CALL result(f,r)
+      GOTO 90
 
-2000   call done
+C     Read format
+1800  READ(lun,1810,END=5010) x2,y2,z2
+1810  FORMAT(3F4)  
+      f = IOFLAG(lun)
+      r = IOSTATUS(lun)
+      WRITE(6,*)  '+Read formated'
+      CALL result(f,r)    
+      WRITE(*,1820) x2,y2, z2
+1820  FORMAT(3F10.1)
+      GOTO 90
 
-C      Benchmark unformated Write
-2100   DO 2150 I = 1, BENCH_ITER
-       DO 2120 J = 1, BENCH_LOOP
-       WRITE(LUN) X1,Y1,Z1
-2120   CONTINUE
-       WRITE(6,*) '+.'
-       REWIND LUN
-2150   CONTINUE
-       IO = BENCH_ITER * BENCH_LOOP
-       WRITE(*,*) ' ',IO,' I/O OPERATIONS DONE!'
-       goto 90
+1900  REWIND  lun 
+      f = IOFLAG(lun)
+      r = IOSTATUS(lun)
+      WRITE(6,*)  '+Rewind'
+      CALL result(f,r)
+      GOTO 90
 
-C      Benchmark formated Write
-2200   DO 2250 I = 1, BENCH_ITER
-       DO 2220 J = 1, BENCH_LOOP
-       WRITE(LUN,2210)  X1,Y1,Z1
-2210   FORMAT(3I4)
-2220   CONTINUE
-       WRITE(6,*) '+.'
-       REWIND LUN
-2250   CONTINUE
-       IO = BENCH_ITER * BENCH_LOOP
-       WRITE(*,*) ' ',IO,' I/O OPERATIONS DONE!'
-       goto 90
+2000  CALL done
 
-C      Benchmark unformated Read
-2300   DO 2350 I = 1, BENCH_ITER
-       DO 2320 J = 1, BENCH_LOOP
-       READ(LUN,END=5000,ERR=5020) X1,Y1,Z1
-2320   CONTINUE
-       WRITE(6,*) '+.'
-       REWIND LUN
-2350   CONTINUE
-       IO = BENCH_ITER * BENCH_LOOP
-       WRITE(*,*) ' ',IO,' I/O OPERATIONS DONE!'
-       goto 90
+C     Benchmark unformated Write
+2100  DO 2150 i = 1, bench_iter
+      DO 2120 j = 1, bench_loop
+      WRITE(lun) x1,y1,z1
+2120  CONTINUE
+      WRITE(6,*) '+.'
+      REWIND lun
+2150  CONTINUE
+      CALL bench(benchio)  
+      GOTO 90 
 
-C      Benchmark formated Read
-D
-2400   DO 2450 I = 1 ,BENCH_ITER
-       DO 2420 J = 1, BENCH_LOOP
-       READ(LUN,2410,END=5010,ERR=5030)  X1,Y1,Z1
-2410   FORMAT(3I4)
-2420   CONTINUE
-       WRITE(6,*) '+.'
-       REWIND LUN
-2450   CONTINUE
-       IO = BENCH_ITER * BENCH_LOOP
-       WRITE(*,*) ' ',IO,' I/O OPERATIONS DONE!'
-       goto 90
+C     Benchmark formated Write
+2200  DO 2250 i = 1, bench_iter
+      DO 2220 j = 1, bench_loop
+      WRITE(lun,2210)  x1,y1,z1
+2210  FORMAT(3I4)
+2220  CONTINUE
+      WRITE(6,*) '+.'
+      REWIND lun
+2250  CONTINUE
+      CALL bench(benchio)   
+      GOTO 90
+
+C     Benchmark unformated Read
+2300  DO 2350 i = 1, bench_iter
+      DO 2320 j = 1, bench_loop
+      READ(lun,END=5000,ERR=5020) x1,y1,z1
+2320  CONTINUE
+      WRITE(6,*) '+.'
+      REWIND lun
+2350  CONTINUE
+      CALL bench(benchio)    
+      GOTO 90
+
+C     Benchmark formated Read
+2400  DO 2450 i = 1 ,bench_iter
+      DO 2420 j = 1, bench_loop
+      READ(lun,2410,END=5010,ERR=5030)  x1,y1,z1
+2410  FORMAT(3I4)
+2420  CONTINUE
+      WRITE(6,*) '+.'
+      REWIND lun
+2450  CONTINUE
+      CALL bench(benchio) 
+      GOTO 90
 
 
-5000   WRITE(*,*) 'End of file detected on unformated read'
-       rc = 1 
-       goto 90
+5000  WRITE(*,*) 'End of file detected on unformated read'
+      rc = 1
+      GOTO 90 
+        
 
-5010   WRITE(*,*) 'End of file detected on formated read'
-       rc = 1 
-       goto 90
+5010  WRITE(*,*) 'End of file detected on formated read'
+      rc = 1 
+      GOTO 90
 
-5020   WRITE(*,*) 'Error detected on unformated read'
-       rc = - 1
-       goto 90
+5020  WRITE(6,*) '+Error detected on unformated read'
+      CALL result(f,r)
+      rc = - 1
+      GOTO 90
 
-5030   WRITE(*,*) 'Error detected on   formated read'
-       rc = -1
-       goto 90
-       end
+5030  WRITE(6,*) '+Error detected on   formated read'
+      CALL result(f,r)
+      rc = -1
+      GOTO 90
+      end
+
+
+      BLOCK DATA
+      INTEGER r
+      COMMON /AREA1/ r
+      DATA r/0/
+      END
+
        
-       subroutine done 
-       integer rc  
-       common /AREA1/rc  
-       write(*,*) 'Return code= ',rc  
-       stop
-       end
+      SUBROUTINE done 
+      INTEGER rcode  
+      COMMON /AREA1/rcode  
+      WRITE(*,*) 'Return code= ',rcode  
+      STOP
+      END
 
-       block data
-       integer rc
-       common /AREA1/ rc
-       data rc/0/
-       end
+      SUBROUTINE result(f,r)
+      INTEGER f,r
+      WRITE(*,*) ' ioflag=',f, '  ioresult=',r   
+      RETURN
+      END
+
+      SUBROUTINE bench(benchio)
+      INTEGER benchio
+      WRITE(*,*) ' ',benchio,' I/O OPERATIONS DONE!'
+      RETURN
+      END
+
+
+
+       
+
 

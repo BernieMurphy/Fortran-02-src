@@ -4,58 +4,58 @@
 C     Test Format statements January 12, 2022
 C Test Case 1
       i=100
-      write(0,10)I,I
+      WRITE(5,10)I,I
    10 format('1:',2x,2i6)
 C
 C Test Case 2
-      write(0,20)I,I
+      WRITE(5,20)I,I
    20 format('2:',2x,1i6,1x,1i5)
 C
 C Test Case 3
-      write(0,30)I,I
+      WRITE(5,30)I,I
    30 format('3:',2x,i6,1x,i5)
 C
 C Test Case 4
-       write(0,40)I,I
+       WRITE(5,40)I,I
    40 format('4: ',1x,i6,' ',i5)
 
 C
 C Test Case 5 Should generate an compiler error. 
       x = 1.532
-      write(0,50) x
+      WRITE(5,50) x
    50 format('5:',2x,F6)
 C
 
 C Test Case 6
       x = 1.532
-      write(0,60) x
+      WRITE(5,60) x
    60 format('6:',2x,F6.2)
 
 C
 C Test Case 7
       x = 120000.545
-      write(0,70)x
+      WRITE(5,70)x
    70 format('7:',2x,F10.2)
 C
 C Test Case 8
-      write(0,80) x
+      WRITE(5,80) x
    80 format('8:',2x,F10.0)
 
 C
 C Test Case 9
-      write(0,90) x
+      WRITE(5,90) x
   90  format('9:  ',F10)
 
 C
 C Test Case 10
-      write(0,100) x
+      WRITE(5,100) x
  100  format('10: ', F11)
 
 
 C      
 C Test Case 11 Fixed: bug was invalid  OP (78)
        x = -x
-       write(0,110) x
+       WRITE(5,110) x
  110   format('11: ',F11.0)
 
 c      
@@ -63,12 +63,12 @@ C Test case 12
 C
        INTEGER A
        a = 'ABCD'
-       write(0,120) A
+       WRITE(5,120) A
   120  format('12:',1x,1A4)    
 
 C
 C Test case 13
-       write(0,130) a
+       WRITE(5,130) a
 130    format('13:',1x,1I20)   
 
 
