@@ -1,7 +1,7 @@
 .elfos
 .binary
 .options
-      WRITE(0,1)
+      WRITE(5,1)
 1     FORMAT(' Compute VSWR Versus Reflected Power')
 C     MAXRFL is maximum reflected power
 C     PWRRFL is reflected power as a percentage
