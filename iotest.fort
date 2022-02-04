@@ -1,9 +1,4 @@
-.elfos
-.binary
 .options
-.stack=7FFF
-.estack=7EFF
-.arch=pev2
 
 C     Test I/O functions in 1802 Fortan II compiler. January 28, 2021
 C     To begin, use Option 1 to open file and then select action desired
@@ -19,8 +14,8 @@ C     bench_loop is the number I/O operations per iteration
       DATA y1/5.
       DATA z1/25.
       COMMON /AREA1/rc
-      benchio = bench_iter * bench_loop
-
+      imult(i,j) = i * j 
+      benchio = imult( bench_iter , bench_loop)
       WRITE(*,*) 'I/O-Benchmark test 1.3 started'
 
 
@@ -45,18 +40,20 @@ C     bench_loop is the number I/O operations per iteration
      C,2300,2400),c
       GOTO 90
 
-1100  CALL open(lun, 'test.dat',reclen)  
+1100  CALL OPEN(lun, 'test.dat',reclen)  
       WRITE(6,*) '+OPEN/I-O'
       CALL result(IOFLAG(lun),IOSTATUS(lun))
       GOTO 90
 
-1200  CALL open(lun, 'test2.dat',reclen)  
-      WRITE(6,*)  '+OPEN/I-O'
+1200  CALL TRUNCATE(lun, 'test.dat',reclen)  
+      WRITE(6,*)  '+OPEN/O'
       CALL result(IOFLAG(lun),IOSTATUS(lun))
       GOTO 90
 
 
-1300  WRITE(*,*) 'Not yet implemented'
+1300  CALL APPEND(lun,'test.dat',reclen) 
+      WRITE(6,*) '+OPEN/APPEND'
+      CALL result(IOFLAG(lun),IOSTATUS(lun))  
       GOTO 90
 
 
@@ -150,13 +147,13 @@ C     Benchmark formated Read
       GOTO 90
 
 
-5000  WRITE(*,*) '+End of file detected on unformated read'
+5000  WRITE(6,*) '+End of file detected on unformated read'
       CALL result(IOFLAG(lun),IOSTATUS(lun))
       rc = 1
       GOTO 90 
         
 
-5010  WRITE(*,*) '+End of file detected on formated read'
+5010  WRITE(6,*) '+End of file detected on formated read'
       CALL result(IOFLAG(lun),IOSTATUS(lun))
       rc = 1 
       GOTO 90
